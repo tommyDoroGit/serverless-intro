@@ -12,6 +12,13 @@ custom:
   stage: ${opt:stage, self:provider.stage}
   region: ${opt:region, self:provider.region}
 
+  ListingsDB: ${self:custom.stage}-listings
+  BookingsDB: ${self:custom.stage}-bookings
+  tableThroughputs:
+    prod: 1
+    default: 1
+  tableThroughput: ${self:custom.tableThroughputs.${self:custom.stage}, self:custom.tableThroughputs.default}
+
   serverless-offline:
     port: 4000
   bundle:
@@ -23,6 +30,33 @@ provider:
   stage: dev
   region: us-east-1
 
+  environment:
+    BookingsDB: ${self:custom.BookingsDB}
+    ListingsDB: ${self:custom.ListingsDB}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+        - dynamodb:GetRecords
+        - dynamodb:GetShardIterator
+        - dynamodb:DescribeStream
+        - dynamodb:ListStream
+
+      Resource:
+        - "Fn::GetAtt": [ ListingsDB, Arn ]
+        - "Fn::GetAtt": [ BookingsDB, Arn ]
+
+
+resources:
+  - ${file(resources/listing-db.yml)}
+  - ${file(resources/booking-db.yml)}
 
 functions:
   graphql:
