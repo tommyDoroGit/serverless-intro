@@ -5,8 +5,6 @@ export interface DeleteTodoProps {
   id: number;
 }
 
-//This is a test
-
 const DeleteTodo = ({ id }: DeleteTodoProps) => {
   function deleteTodo() {
     const url = `https://6ozl6dmem7.execute-api.ap-southeast-2.amazonaws.com/todos/${id}`;
