@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import DeleteTodo from "./deleteTodo";
 
 interface Todo {
   completed: boolean;
@@ -15,8 +16,9 @@ const Todos = () => {
       .get("https://6ozl6dmem7.execute-api.ap-southeast-2.amazonaws.com/todos")
       .then((response) => {
         setTodos(response.data);
-      });
-  }, [todos]);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   if (!todos) return null;
 
@@ -28,6 +30,7 @@ const Todos = () => {
           <li key={t.id}>
             <div>{t.todo}</div>
             <div>{t.completed && <div>Completed</div>}</div>
+            <DeleteTodo id={t.id} />
           </li>
         ))}
       </ul>

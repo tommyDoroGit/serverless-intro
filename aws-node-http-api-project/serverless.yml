@@ -3,6 +3,8 @@ frameworkVersion: '2 || 3'
 
 provider:
   name: aws
+  httpApi:
+    cors: true
   runtime: nodejs12.x
   lambdaHashingVersion: '20201221'
   region: ap-southeast-2
@@ -13,6 +15,7 @@ provider:
       Resource:
         - arn:aws:dynamodb:ap-southeast-2:513645433654:table/TodoTable
 
+
 functions:
   addTodo:
     handler: src/addTodo.handler
@@ -20,7 +23,6 @@ functions:
       - httpApi:
           path: /
           method: post
-
   fetchTodos:
     handler: src/fetchTodos.handler
     events:
@@ -33,7 +35,12 @@ functions:
       - httpApi:
           path: /todos/{id}
           method: get
-
+  deleteTodo:
+    handler: src/deleteTodo.handler
+    events:
+      - httpApi:
+          path: /todos/{id}
+          method: delete
   updateTodo:
     handler: src/updateTodo.handler
     events:

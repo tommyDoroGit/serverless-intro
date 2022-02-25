@@ -1,26 +1,16 @@
 "use strict";
-const { v4 } = require("uuid");
 const AWS = require("aws-sdk");
 
-const addTodo = async (event) => {
+const deleteTodo = async (event) => {
   const dynamoDB = new AWS.DynamoDB.DocumentClient();
-  const { todo } = JSON.parse(event.body);
-  const createdAt = new Date();
-  const id = v4();
+  const { id } = event.pathParameters;
 
   console.log("this is an id", id);
 
-  const newTodo = {
-    id,
-    todo,
-    createdAt,
-    completed: false,
-  };
-
   await dynamoDB
-    .put({
+    .delete({
       TableName: "TodoTable",
-      Item: newTodo,
+      Key: { id },
     })
     .promise();
 
@@ -30,12 +20,13 @@ const addTodo = async (event) => {
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Credentials": true,
       "Access-Control-Allow-Methods": "DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT",
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify(newTodo),
+    body: JSON.stringify({
+      msg: "Todo deleted",
+    }),
   };
 };
 
 module.exports = {
-  handler: addTodo,
+  handler: deleteTodo,
 };
